@@ -1,18 +1,14 @@
 import { useState } from 'react';
 import styles from './ExerciseBlock.css';
 
-export default function ExerciseBlock({exercise, sets, reps}) {
-
-    //open up a graph popup when clicked
-    function handleClick() {
-        alert("clicked");
-    }
+export default function ExerciseBlock({name, sets, reps, onDelete}) {
 
     return (
-        <div className='container' onClick={handleClick}>
-            <h2>Exercise: {exercise}</h2>
+        <div className='container'>
+            <h2>Exercise: {name}</h2>
             <p>Current Sets: {sets}</p>
             <p>Current Reps: {reps}</p>
+            <button onClick={onDelete} style={{ marginTop: '10px', backgroundColor: 'red', color: 'white' }}>Delete Exercise</button>
         </div>
     );
 }

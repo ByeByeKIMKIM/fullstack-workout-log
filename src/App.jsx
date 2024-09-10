@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
+import axios from 'axios';
 
 import ExerciseBlock from './ExerciseBlock'
 
@@ -12,34 +13,77 @@ function App() {
   //the "[]" indicates that our state is an array
   //remember that JS is is a dynamic language, so types aren't specifies
   const [exercises, setExercises] = useState([
-    {exercise: 'Bench', sets: '3', reps: '10'}
+    {name: 'Bench', sets: '3', reps: '10'}
   ]);
 
-  //function to give the addExercise button functionality
-  const handleAddExercise = () => {
+  // Fetch exercises from the database when the component mounts
+  useEffect(() => {
+    const fetchExercises = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/exercises');
+        setExercises(response.data);
+      } catch (error) {
+        console.error('Failed to fetch exercises:', error);
+      }
+    };
+
+    fetchExercises();
+  }, []);
+
+  // Function to handle adding a new exercise
+  const handleAddExercise = async () => {
     const exerciseName = prompt('Enter the name of the exercise');
 
-    if(exerciseName) {
-        //we are specifying the setExercises function here
-        //prevExercises refers to the current state
-        //"..." creates a new array with the old state (prevExercises) + the new exercise (exercise: ...)
-        setExercises((prevExercises) => 
-            [...prevExercises, {exercise: exerciseName, sets: '', reps: ''}]);
+    if (exerciseName) {
+      try {
+        // Send POST request to add a new exercise
+        const response = await axios.post('http://localhost:3001/exercises', {
+          name: exerciseName,
+          sets: 0,
+          reps: 0
+        });
+
+        // Add the new exercise to the state
+        setExercises((prevExercises) => [
+          ...prevExercises,
+          { name: exerciseName, sets: 0, reps: 0, id: response.data.exerciseId }
+        ]);
+      } catch (error) {
+        console.error('Failed to add exercise:', error);
+      }
     }
-  }
+  };
+
+  const handleDeleteExercise = async (id) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this exercise?');
+
+    if (confirmDelete) {
+      try {
+        //send a delete request to delete an exercise
+        await axios.delete(`http://localhost:3001/exercises/${id}`);
+        setExercises((prevExercises) =>
+          prevExercises.filter((exercise) => exercise.id !== id)
+        );
+      } catch (error) {
+        console.error('Failed to delete exercise:', error);
+      }
+    }
+  };
 
   return (
     <div className="App">
-      {exercises.map((exercise, index) => (
+      {exercises.map((exercise) => (
         <ExerciseBlock
-        key={index}
-        exercise={exercise.exercise}
-        sets={exercise.sets}
-        reps={exercise.reps} />
-      ))};
+          key={exercise.id} // Use unique ID from database
+          name={exercise.name}
+          sets={exercise.sets}
+          reps={exercise.reps}
+          onDelete = {() => handleDeleteExercise(exercise.id)}
+        />
+      ))}
       <button onClick={handleAddExercise}>Add Exercise</button>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
