@@ -12,9 +12,7 @@ function App() {
   //"setExercises" is a state-updater function
   //the "[]" indicates that our state is an array
   //remember that JS is is a dynamic language, so types aren't specifies
-  const [exercises, setExercises] = useState([
-    {name: 'Bench', sets: '3', reps: '10'}
-  ]);
+  const [exercises, setExercises] = useState([]);
 
   // Fetch exercises from the database when the component mounts
   useEffect(() => {
@@ -42,11 +40,12 @@ function App() {
           sets: 0,
           reps: 0
         });
+        console.log(response.data.exerciseId);
 
         // Add the new exercise to the state
         setExercises((prevExercises) => [
           ...prevExercises,
-          { name: exerciseName, sets: 0, reps: 0, id: response.data.exerciseId }
+          { id: response.data.exerciseId, name: exerciseName, sets: 0, reps: 0 }
         ]);
       } catch (error) {
         console.error('Failed to add exercise:', error);
@@ -59,6 +58,7 @@ function App() {
 
     if (confirmDelete) {
       try {
+        console.log(id);
         //send a delete request to delete an exercise
         await axios.delete(`http://localhost:3001/exercises/${id}`);
         setExercises((prevExercises) =>
@@ -75,6 +75,7 @@ function App() {
       {exercises.map((exercise) => (
         <ExerciseBlock
           key={exercise.id} // Use unique ID from database
+          
           name={exercise.name}
           sets={exercise.sets}
           reps={exercise.reps}
