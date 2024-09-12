@@ -9,10 +9,12 @@
     transition: color 0.3s ease;
     transition: background-color 0.3s ease;
 
-    width: 30vh;
+    width: 21vw;
     height: fit-content;
 
     text-align: center;
+
+    margin: 10px;
 }
 
 .container:hover {
@@ -27,6 +29,12 @@
     right: 10px;
 
     color: rgb(255, 0, 0);
-    background: white;
+    background-color: white;
     border-radius: 5px;
+
+    transition: background-color 0.3s ease;
+}
+
+.exerciseBlockButton:hover {
+    background-color: rgb(255, 182, 182);
 }

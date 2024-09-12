@@ -82,7 +82,7 @@ function App() {
           onDelete = {() => handleDeleteExercise(exercise.id)}
         />
       ))}
-      <button onClick={handleAddExercise}>Add Exercise</button>
+      <button className='addExerciseButton' onClick={handleAddExercise}>Add Exercise</button>
     </div>
   );
 }
